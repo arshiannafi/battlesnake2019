@@ -24,10 +24,11 @@ app.use(poweredByHandler)
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
-
   // Response data
   const data = {
     color: '#DFFF00',
+    headType: 'silly',
+    tailType: 'curled'
   }
 
   return response.json(data)
@@ -36,7 +37,6 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
-
   // Response data
   const data = {
     move: 'right', // one of: ['up','down','left','right']
