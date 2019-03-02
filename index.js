@@ -24,53 +24,31 @@ function removeFromArray(arr,el){
       arr.splice(i,1);
     }
   }
-
 }
 
 
 
 function initalize(rows, cols, grid) {
-
   // making a 2d array
   let i = 0;
   let j = 0;
-
   for (i = 0; i < cols; i++) {
-
     grid[i] = new Array(rows);
-
   }
-
-
-
   for (i = 0; i < cols; i++) {
-
     for (j = 0; j < rows; j++) {
-
       grid[i][j] = new spot(i, j);
-
-
     }
-
   }
-
 
   j = 0;
   i = 0;
 
   for (i = 0; i < cols; i++) {
-
-
     for (j = 0; j < rows; j++) {
-
-
       grid[i][j].addNeighbors(grid, cols, rows);
-
-
     }
-
   }
-
 }
 
 function spot(i, j) {
@@ -85,36 +63,22 @@ function spot(i, j) {
   this.addNeighbors = function(grid, cols, rows) {
     var i = this.i;
     var j = this.j;
-
     if (i < cols - 1) {
-
       this.neighbors.push(grid[i + 1][j]);
-
     }
-
     if (i > 0) {
-
       this.neighbors.push(grid[i - 1][j]);
-
     }
 
     if (j < rows - 1) {
-
       this.neighbors.push(grid[i][j + 1]);
-
     }
-
     if (j > 0) {
-
       this.neighbors.push(grid[i][j - 1]);
-
     }
-
 
   }
 }
-
-
 
 
 // For deployment to Heroku, the port needs to be set using ENV, so
@@ -149,129 +113,81 @@ app.post('/start', (request, response) => {
 
   end = grid[f_x][f_y];
 
-
   // Response data
   const data = {
     color: '#DFFF00',
     headType: 'silly',
     tailType: 'curled'
   }
-
   return response.json(data)
 })
 
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
-
-
   openSet.push(start);
-
   while (openSet.length > 0) {
-
     var lowestIndex = 0;
-
     for (i = 0; i < openSet.length; i++) {
       if (openSet[i].f < openSet[lowestIndex].f) {
         // recall that the next working node is chosen to be the one that has lowest cost
         lowestIndex = i;
-
       }
-
     }
-
     // our new working node
     var current = openSet[lowestIndex];
 // if this is the food node print path and end;
     if (current === end) {
-
       path = [];
       var temp = current;
-
       while (temp.previous) {
         path.push(temp);
         temp = temp.previous;
       }
-
     }
-
-
     //  a working node from the openset
     removeFromArray(openSet, current);
-
     // add working node to the working node list
     closedSet.push(current);
-
-
     // get the neighbors of the working node
-
     var neighbors = current.neighbors;
-
-
     for (i = 0; i < neighbors.length; i++) {
-
       let neighbor = neighbors[i];
-
       // if not previously a working node
       if (!closedSet.includes(neighbor)) {
-
         var tempG = current.g + 1;
-
         // if this was previously a neighbor of another working node
-
         if (openSet.includes(neighbor)) {
-
           if (tempG < neighbor.g) {
-
             neighbor.g = tempG;
           }
         } else {
           // if it has not been a neighbor to working node yet
-
           neighbor.g = tempG;
           openSet.push(neighbor);
-
         }
-
-
         neighbor.h = heuristic(neighbor, end);
         neighbor.f = neighbor.g + neighbor.h;
-
         neighbor.previous = current;
-
       }
-
     }
-
-
-
   }
   console.log("the end",end.i,end.j);
-
 let turn = " ";
-
   for (i = 0; i < path.length; i++) {
     console.log(path[i].i, path[i].j);
-
     if (path[i].i - start.i === 1) {
       start.i +=1;
       turn = "right";
-
     }
-
     if (path[i].j - start.j === 1) {
-
       start.j += 1;
       turn = "up";
-
     }
-
-
     const data = {
       move: turn, // one of: ['up','down','left','right']
     }
     return response.json(data)
-
   }
 /*
   let turn = " ";
@@ -289,7 +205,6 @@ let turn = " ";
     turn = "right";
   }
 */
-
 
   /*const data = {
     move: "right", // one of: ['up','down','left','right']
