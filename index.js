@@ -13,15 +13,17 @@ let closedSet = [];
 let start;
 let end;
 let path = [];
+let mainCount = 0;
 
-function heuristic(a,b){
-  let d = Math.abs(a.i - b.i) + Math.abs (a.j - b.j);
+function heuristic(a, b) {
+  let d = Math.abs(a.i - b.i) + Math.abs(a.j - b.j);
   return d;
 }
-function removeFromArray(arr,el){
-  for(var i = arr.length-1; i>=0; i--){
-    if(arr[i]==el){
-      arr.splice(i,1);
+
+function removeFromArray(arr, el) {
+  for (var i = arr.length - 1; i >= 0; i--) {
+    if (arr[i] == el) {
+      arr.splice(i, 1);
     }
   }
 }
@@ -162,7 +164,7 @@ app.post('/move', (request, response) => {
     }
     // our new working node
     var current = openSet[lowestIndex];
-// if this is the food node print path and end;
+    // if this is the food node print path and end;
     if (current === end) {
       path = [];
       var temp = current;
@@ -198,39 +200,60 @@ app.post('/move', (request, response) => {
       }
     }
   }
-  console.log("the end",end.i,end.j);
-let turn = " ";
-  for (i = 0; i < path.length; i++) {
-    console.log(path[i].i, path[i].j);
-    if (path[i].i - start.i === 1) {
-      start.i +=1;
+  //  console.log("the end",end.i,end.j);
+
+  let turn = " ";
+
+  for (var i = 0; i < path.length; i++) {
+
+    //console.log(path[i].i, path[i].j);
+
+  }
+
+  for (var i = 0; i < path.length; i++) {
+    //console.log(path[i].i, path[i].j);
+    console.log("food",end);
+    let x_dif = start.i - path[path.length-1].i;
+    let y_dif = start.j - path[path.length-1].j;
+    console.log(start.i,path[path.length-1].i);
+    console.log( x_dif,y_dif)
+    if (x_dif === 1 && y_dif === 0) {
+      start.i += 1;
+      turn = "left";
+    }
+    if (x_dif === 0 && y_dif === 1) {
+      turn = "up";
+      start.y+=1;
+    }
+    if (x_dif === -1 && y_dif === 0) {
       turn = "right";
     }
-    if (path[i].j - start.j === 1) {
-      start.j += 1;
-      turn = "up";
+    if (x_dif === 0 && y_dif === -1) {
+      turn = "down";
     }
+
+    console.log(turn);
     const data = {
       move: turn, // one of: ['up','down','left','right']
     }
     return response.json(data)
   }
-/*
-  let turn = " ";
+  /*
+    let turn = " ";
 
-  if (request.body.you.body[0].x > 13) {
-    turn = "down";
-  }
-  if (request.body.you.body[0].x < 2) {
-    turn = "up";
-  }
-  if (request.body.you.body[0].y > 13) {
-    turn = "left";
-  }
-  if (request.body.you.body[0].y < 2) {
-    turn = "right";
-  }
-*/
+    if (request.body.you.body[0].x > 13) {
+      turn = "down";
+    }
+    if (request.body.you.body[0].x < 2) {
+      turn = "up";
+    }
+    if (request.body.you.body[0].y > 13) {
+      turn = "left";
+    }
+    if (request.body.you.body[0].y < 2) {
+      turn = "right";
+    }
+  */
 
   /*const data = {
     move: "right", // one of: ['up','down','left','right']
