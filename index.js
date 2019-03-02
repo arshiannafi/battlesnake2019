@@ -122,9 +122,35 @@ app.post('/start', (request, response) => {
   return response.json(data)
 })
 
+function distToFood(a, b) {
+  let d = Math.sqrt(Math.abs(a.x - b.x) + Math.abs(a.y - b.y));
+  return d;
+}
+
+function bestFood(head, foods) {
+
+	let min_food_index = 0;
+	let min_dist = 100;
+
+	for(f in foods){
+		let dist = distToFood(head,foods[f])
+		if (dist < min_dist) {
+			min_food_index = f
+			min_dist = dist
+		}
+	}
+	// console.log(foods[min_food_index]);
+	return foods[min_food_index]
+
+
+}
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
+
+
+  var food = bestFood(request.body.you.body[0], request.body.board.food)
+
   openSet.push(start);
   while (openSet.length > 0) {
     var lowestIndex = 0;
