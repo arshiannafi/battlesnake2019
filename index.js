@@ -8,12 +8,6 @@ const {
   genericErrorHandler,
   poweredByHandler
 } = require('./handlers.js')
-let openSet = [];
-let closedSet = [];
-let start;
-let end;
-let path = [];
-let mainCount = 0;
 
 function heuristic(a, b) {
   let d = Math.abs(a.i - b.i) + Math.abs(a.j - b.j);
@@ -135,22 +129,29 @@ function bestFood(head, foods) {
 
 
 }
-// Handle POST request to '/move'
-app.post('/move', (request, response) => {
-  // NOTE: Do something here to generate your move
 
-  let rows = request.body.board.height;
-  let cols = request.body.board.width;
+function astar(board, you, food) {
+
+  // Variables
+  let openSet = [];
+  let closedSet = [];
+  let start;
+  let end;
+  let path = [];
+  let mainCount = 0;
+
+  // inits
+  let rows = board.height;
+  let cols = board.width;
   grid = new Array(cols);
   initalize(rows, cols, grid);
-  let s_x = request.body.you.body[0].x;
-  let s_y = request.body.you.body[0].y;
-  let f_x = request.body.board.food[0].x;
-  let f_y = request.body.board.food[0].y;
+  let s_x = you.body[0].x;
+  let s_y = you.body[0].y;
 
+  // Snake head
   start = grid[s_x][s_y];
 
-  let food = bestFood(request.body.you.body[0], request.body.board.food)
+  // Goal
   end = grid[food.x][food.y]
 
 
@@ -202,10 +203,22 @@ app.post('/move', (request, response) => {
     }
   }
   //  console.log("the end",end.i,end.j);
+  return path
+}
+
+// Handle POST request to '/move'
+app.post('/move', (request, response) => {
+  // NOTE: Do something here to generate your move
+
+  let food = bestFood(request.body.you.body[0], request.body.board.food)
+
+  path = astar(request.body.board, request.body.you, food)
+
+
 
   let turn = " ";
-  let x_dif = start.i - path[path.length - 1].i;
-  let y_dif = start.j - path[path.length - 1].j;
+  let x_dif = request.body.you.body[0].x - path[path.length - 1].i;
+  let y_dif = request.body.you.body[0].y - path[path.length - 1].j;
   if (x_dif === 1 && y_dif === 0) {
     turn = "left";
   }
