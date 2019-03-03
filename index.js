@@ -95,25 +95,14 @@ app.use(poweredByHandler)
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
 
+let grid;
+
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
-  let rows = request.body.board.height;
-  let cols = request.body.board.width;
-  let grid = new Array(cols);
 
-  initalize(rows, cols, grid);
-  let s_x = request.body.you.body[0].x;
 
-  let s_y = request.body.you.body[0].y;
 
-  let f_x = request.body.board.food[0].x;
-
-  let f_y = request.body.board.food[0].y;
-
-  start = grid[s_x][s_y];
-
-  end = grid[f_x][f_y];
 
   // Response data
   const data = {
@@ -131,18 +120,18 @@ function distToFood(a, b) {
 
 function bestFood(head, foods) {
 
-	let min_food_index = 0;
-	let min_dist = 100;
+  let min_food_index = 0;
+  let min_dist = 100;
 
-	for(f in foods){
-		let dist = distToFood(head,foods[f])
-		if (dist < min_dist) {
-			min_food_index = f
-			min_dist = dist
-		}
-	}
-	// console.log(foods[min_food_index]);
-	return foods[min_food_index]
+  for (f in foods) {
+    let dist = distToFood(head, foods[f])
+    if (dist < min_dist) {
+      min_food_index = f
+      min_dist = dist
+    }
+  }
+  // console.log(foods[min_food_index]);
+  return foods[min_food_index]
 
 
 }
@@ -150,8 +139,20 @@ function bestFood(head, foods) {
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
 
+  let rows = request.body.board.height;
+  let cols = request.body.board.width;
+  grid = new Array(cols);
+  initalize(rows, cols, grid);
+  let s_x = request.body.you.body[0].x;
+  let s_y = request.body.you.body[0].y;
+  let f_x = request.body.board.food[0].x;
+  let f_y = request.body.board.food[0].y;
 
-  var food = bestFood(request.body.you.body[0], request.body.board.food)
+  start = grid[s_x][s_y];
+
+  let food = bestFood(request.body.you.body[0], request.body.board.food)
+  end = grid[food.x][food.y]
+
 
   openSet.push(start);
   while (openSet.length > 0) {
@@ -203,41 +204,57 @@ app.post('/move', (request, response) => {
   //  console.log("the end",end.i,end.j);
 
   let turn = " ";
-
-  for (var i = 0; i < path.length; i++) {
-
-    //console.log(path[i].i, path[i].j);
-
+  let x_dif = start.i - path[path.length - 1].i;
+  let y_dif = start.j - path[path.length - 1].j;
+  if (x_dif === 1 && y_dif === 0) {
+    turn = "left";
+  }
+  if (x_dif === 0 && y_dif === 1) {
+    turn = "up";
+  }
+  if (x_dif === -1 && y_dif === 0) {
+    turn = "right";
+  }
+  if (x_dif === 0 && y_dif === -1) {
+    turn = "down";
   }
 
-  for (var i = 0; i < path.length; i++) {
-    //console.log(path[i].i, path[i].j);
-    console.log("food",end);
-    let x_dif = start.i - path[path.length-1].i;
-    let y_dif = start.j - path[path.length-1].j;
-    console.log(start.i,path[path.length-1].i);
-    console.log( x_dif,y_dif)
-    if (x_dif === 1 && y_dif === 0) {
-      start.i += 1;
-      turn = "left";
-    }
-    if (x_dif === 0 && y_dif === 1) {
-      turn = "up";
-      start.y+=1;
-    }
-    if (x_dif === -1 && y_dif === 0) {
-      turn = "right";
-    }
-    if (x_dif === 0 && y_dif === -1) {
-      turn = "down";
-    }
 
-    console.log(turn);
-    const data = {
-      move: turn, // one of: ['up','down','left','right']
-    }
-    return response.json(data)
+  const data = {
+    move: turn, // one of: ['up','down','left','right']
   }
+  return response.json(data)
+
+
+
+  // for (var i = 0; i < path.length; i++) {
+  //   //console.log(path[i].i, path[i].j);
+  //   console.log("food", end);
+  //   let x_dif = start.i - path[path.length - 1].i;
+  //   let y_dif = start.j - path[path.length - 1].j;
+  //   console.log(start.i, path[path.length - 1].i);
+  //   console.log(x_dif, y_dif)
+  //   if (x_dif === 1 && y_dif === 0) {
+  //     start.i += 1;
+  //     turn = "left";
+  //   }
+  //   if (x_dif === 0 && y_dif === 1) {
+  //     turn = "up";
+  //     start.y += 1;
+  //   }
+  //   if (x_dif === -1 && y_dif === 0) {
+  //     turn = "right";
+  //   }
+  //   if (x_dif === 0 && y_dif === -1) {
+  //     turn = "down";
+  //   }
+  //
+  //   console.log(turn);
+  //   const data = {
+  //     move: turn, // one of: ['up','down','left','right']
+  //   }
+  //   return response.json(data)
+  // }
   /*
     let turn = " ";
 
@@ -259,7 +276,7 @@ app.post('/move', (request, response) => {
     move: "right", // one of: ['up','down','left','right']
   }
 */
-  return response.json(data)
+  // return response.json(data)
 })
 
 app.post('/end', (request, response) => {
