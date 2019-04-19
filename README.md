@@ -1,3 +1,19 @@
+# Battlesnake 2019
+
+Contributors: Muhammad Ali ([@MAsimSENG](https://github.com/MAsimSENG)), Abdur Rafay Chaudhry ([@Airborne95](https://github.com/Airborne95)), and Arshi Annafi.
+
+Template: <https://github.com/battlesnakeio/starter-snake-node>
+
+
+
+![snake_demo](./snake_demo.gif)
+
+
+
+---
+
+
+
 # starter-snake-node(js)
 
 A simple [Battlesnake AI](https://battlesnake.io) written in Javascript for NodeJS.
